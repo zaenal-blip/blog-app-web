@@ -15,6 +15,7 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { axiosInstance, axiosInstance2 } from "~/lib/axios";
 import { useAuth } from "~/stores/useAuth";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const formSchema = z.object({
   email: z.email({ error: "Invalid email address." }),
@@ -52,6 +53,23 @@ export default function Login() {
       alert("Error login");
     }
   }
+
+  const handleLogin = useGoogleLogin({
+    onSuccess:async ({access_token}) => {
+      try {
+        const response = await axiosInstance2.post("/auth/google", {
+          accessToken: access_token,
+        });
+        login({...response.data});
+        navigate("/");
+      } catch (error) {
+        alert("Error login with Google");
+      }
+    },
+    onError: (error) => {
+      console.log('Login Failed:', error);
+    }
+  });
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -118,9 +136,18 @@ export default function Login() {
             <Button type="submit" form="form-login" className="w-full">
               Login
             </Button>
+
+            <Button type="button"
+             variant="secondary"
+             className="w-full" 
+             onClick={() => handleLogin()}>
+              Google login
+            </Button>
+
           </form>
         </CardContent>
         <CardFooter className="justify-center">
+        
           <p className="text-sm text-muted-foreground">
             Don't have an account?{" "}
             <Link
