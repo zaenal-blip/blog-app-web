@@ -47,7 +47,7 @@ export const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <GoogleOAuthProvider clientId="562694821419-3nrsjdq7a1qioam57kbgh9rmu7fch4e8.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <Outlet />
       </QueryClientProvider>
