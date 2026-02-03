@@ -10,6 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import {GoogleOAuthProvider} from "@react-oauth/google";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -46,9 +47,11 @@ export const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Outlet />;
-    </QueryClientProvider>
+    <GoogleOAuthProvider clientId="562694821419-3nrsjdq7a1qioam57kbgh9rmu7fch4e8.apps.googleusercontent.com">
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
   );
 }
 
