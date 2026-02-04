@@ -36,7 +36,11 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                <p>{user.name}</p>
+                <Link to="/profile">
+                  <Button variant="ghost" size="sm">
+                    Profile
+                  </Button>
+                </Link>
                 <Button variant="ghost" size="sm" onClick={logout}>
                   Logout
                 </Button>
