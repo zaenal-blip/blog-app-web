@@ -17,6 +17,7 @@ type Store = {
   user: UserAuth | null;
   login: (payload: UserAuth) => void;
   logout: () => void;
+  updateUser: (payload: Partial<UserAuth>) => void;
 };
 
 export const useAuth = create<Store>()(
@@ -25,6 +26,9 @@ export const useAuth = create<Store>()(
       user: null,
       login: (payload) => set(() => ({ user: payload })),
       logout: () => set(() => ({ user: null })),
+      updateUser: (payload) => set((state) => ({ 
+        user: state.user ? { ...state.user, ...payload } : null 
+      })),
     }),
     { name: "blog-storage" }
   )
