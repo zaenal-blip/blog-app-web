@@ -43,19 +43,10 @@ export default function Profile() {
       const formData = new FormData();
       formData.append("photo", data.photo);
 
-      await axiosInstance2.post("/users/photo", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      });
+      await axiosInstance2.post("/users/photo", formData)
 
       // Fetch updated user data
-      const response = await axiosInstance2.get(`/users/${user?.id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      });
+      const response = await axiosInstance2.get(`/users/${user?.id}`);
 
       // Update user in store
       updateUser(response.data);
