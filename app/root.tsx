@@ -11,6 +11,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import {GoogleOAuthProvider} from "@react-oauth/google";
+import { Toaster } from "~/components/ui/sonner"
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -50,6 +51,7 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <Outlet />
+        <Toaster richColors position="top-right"/>
       </QueryClientProvider>
     </GoogleOAuthProvider>
   );
