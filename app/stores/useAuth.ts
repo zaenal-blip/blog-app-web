@@ -26,9 +26,14 @@ export const useAuth = create<Store>()(
       user: null,
       login: (payload) => set(() => ({ user: payload })),
       logout: async () => {
-        await axiosInstance2.post("/auth/logout");
-        set(() => ({ user: null }));
-        window.location.href = "/";
+        try {
+          await axiosInstance2.post("/auth/logout");
+        } catch (error) {
+          console.error("Logout error:", error);
+        } finally {
+          set(() => ({ user: null }));
+          window.location.href = "/";
+        }
       },
       updateUser: (payload) => set((state) => ({
         user: state.user ? { ...state.user, ...payload } : null
