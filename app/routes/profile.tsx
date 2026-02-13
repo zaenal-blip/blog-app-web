@@ -14,6 +14,7 @@ import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { axiosInstance2 } from "~/lib/axios";
 import { useAuth } from "~/stores/useAuth";
+import useForgotPassword from "~/hooks/api/useForgotPassword";
 
 const formSchema = z.object({
   photo: z.instanceof(File).refine(
@@ -37,6 +38,14 @@ export default function Profile() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  const { mutateAsync: forgotPassword, isPending: isForgotPending } = useForgotPassword();
+
+  const handleResetPassword = async () => {
+    if (user?.email) {
+      await forgotPassword({ email: user.email });
+    }
+  };
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
@@ -123,6 +132,20 @@ export default function Profile() {
               Upload Photo
             </Button>
           </form>
+
+          <div className="pt-4 border-t">
+            <Button
+              variant="outline"
+              className="w-full text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              onClick={handleResetPassword}
+              disabled={isForgotPending}
+            >
+              {isForgotPending ? "Sending..." : "Reset Password"}
+            </Button>
+            <p className="text-xs text-center text-muted-foreground mt-2">
+              A password reset link will be sent to your email.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

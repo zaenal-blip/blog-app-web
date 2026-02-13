@@ -7,4 +7,5 @@ route("/blogs/:objectId", "routes/blog.tsx"),
 route("/create", "routes/create-blog.tsx"),
 route("/profile", "routes/profile.tsx"),
 route("/forgot-password", "routes/forgot-password.tsx"),
+route("/reset-password/:token", "routes/reset-password.tsx")
 ] satisfies RouteConfig;
