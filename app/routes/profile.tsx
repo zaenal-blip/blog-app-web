@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { axiosInstance2 } from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 import { useAuth } from "~/stores/useAuth";
 import useForgotPassword from "~/hooks/api/useForgotPassword";
 
@@ -52,10 +52,10 @@ export default function Profile() {
       const formData = new FormData();
       formData.append("photo", data.photo);
 
-      await axiosInstance2.post("/users/photo", formData)
+      await axiosInstance.post("/users/photo", formData)
 
       // Fetch updated user data
-      const response = await axiosInstance2.get(`/users/${user?.id}`);
+      const response = await axiosInstance.get(`/users/${user?.id}`);
 
       // Update user in store
       updateUser(response.data);

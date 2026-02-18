@@ -13,7 +13,7 @@ import {
 } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { axiosInstance2 } from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 import { resetPasswordSchema, type ResetPasswordSchema } from "~/components/schema/reset-password";
 import useResetPassword from "~/hooks/api/useResetPassword";
 export default function ResetPassword() {

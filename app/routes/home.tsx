@@ -8,8 +8,13 @@ import { axiosInstance } from "~/lib/axios";
 import type { Route } from "./+types/home";
 import type { Blog } from "types/blog";
 import { useQuery } from "@tanstack/react-query";
+import type { PagiableResponse } from "types/pagination";
 
-export function meta({}: Route.MetaArgs) {
+import { useQueryState, parseAsInteger, parseAsString } from "nuqs";
+import { useDebounce } from "~/hooks/useDebounce";
+import { PaginationSection } from "~/components/pagination-section";
+
+export function meta({ }: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
@@ -17,33 +22,30 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-const {data : Blogs, isPending} = useQuery({
-  queryKey: ["blogs"],
-  queryFn: async () => {
-    const {data} = await axiosInstance <Blog[]> (
-      "/api/data/Blogs?sortBy=%60created%60%20desc"
-    );
-    return data
-  }
-})
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1).withOptions({ shallow: false }));
+  const [search, setSearch] = useQueryState("search", parseAsString.withDefault("").withOptions({ shallow: false }));
 
-  const [logs, setBlogs] = useState<Blog[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const getBlogs = async () => {
-    try {
-      const { data } = await axiosInstance("/api/data/Blogs");
-      setBlogs(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [searchInput, setSearchInput] = useState(search);
+  const debouncedSearch = useDebounce(searchInput, 500);
 
   useEffect(() => {
-    getBlogs();
-  }, []);
+    setSearch(debouncedSearch);
+    setPage(1); // Reset page on search
+  }, [debouncedSearch]);
+
+  const queryParams = {
+    page: page,
+    take: 3,
+    search: search || undefined,
+  };
+
+  const { data: Blogs, isPending } = useQuery({
+    queryKey: ["blogs", page, search],
+    queryFn: async () => {
+      const { data } = await axiosInstance<PagiableResponse<Blog>>("/blogs", { params: queryParams });
+      return data;
+    },
+  });
 
   return (
     <div>
@@ -68,6 +70,8 @@ const {data : Blogs, isPending} = useQuery({
               type="text"
               placeholder="Search blogs..."
               className="pl-10"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
         </div>
@@ -80,10 +84,18 @@ const {data : Blogs, isPending} = useQuery({
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {Blogs?.map((blog) => (
-            <BlogCard key={blog.objectId} blog={blog} />
+          {Blogs?.data.map((blog: Blog) => (
+            <BlogCard key={blog.id} blog={blog} />
           ))}
         </div>
+
+        {Blogs?.meta && (
+          <PaginationSection
+            page={page}
+            totalPage={Math.ceil(Blogs.meta.total / Blogs.meta.take)}
+            onChangePage={setPage}
+          />
+        )}
       </main>
       <Footer />
     </div>

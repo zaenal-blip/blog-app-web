@@ -1,13 +1,14 @@
 export interface Blog {
-  objectId: string;
-  thumbnail: string;
-  author: string;
-  created: number;
-  ___class: string;
-  description: string;
+  id: number;
   title: string;
-  ownerId: string | null;
-  category: string;
-  updated: number;
+  slug: string;
+  description: string;
+  thumbnail: string;
   content: string;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: {
+    name: string;
+  };
 }

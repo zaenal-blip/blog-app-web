@@ -13,7 +13,7 @@ import {
 } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { axiosInstance, axiosInstance2 } from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 import { useAuth } from "~/stores/useAuth";
 import { useGoogleLogin } from "@react-oauth/google";
 
@@ -41,12 +41,12 @@ export default function Login() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      const response = await axiosInstance2.post("/auth/login", {
+      const response = await axiosInstance.post("/auth/login", {
         email: data.email,
         password: data.password,
       });
-      
-      login({...response.data});
+
+      login({ ...response.data });
 
       navigate("/");
     } catch (error) {
@@ -55,12 +55,12 @@ export default function Login() {
   }
 
   const handleLogin = useGoogleLogin({
-    onSuccess:async ({access_token}) => {
+    onSuccess: async ({ access_token }) => {
       try {
-        const response = await axiosInstance2.post("/auth/google", {
+        const response = await axiosInstance.post("/auth/google", {
           accessToken: access_token,
         });
-        login({...response.data});
+        login({ ...response.data });
         navigate("/");
       } catch (error) {
         alert("Error login with Google");
@@ -138,16 +138,16 @@ export default function Login() {
             </Button>
 
             <Button type="button"
-             variant="secondary"
-             className="w-full" 
-             onClick={() => handleLogin()}>
+              variant="secondary"
+              className="w-full"
+              onClick={() => handleLogin()}>
               Google login
             </Button>
 
           </form>
         </CardContent>
         <CardFooter className="justify-center">
-        
+
           <p className="text-sm text-muted-foreground">
             Don't have an account?{" "}
             <Link
