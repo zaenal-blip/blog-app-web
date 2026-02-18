@@ -27,28 +27,15 @@ import { Textarea } from "~/components/ui/textarea";
 import { axiosInstance } from "~/lib/axios";
 import { useAuth } from "~/stores/useAuth";
 
-interface ThumbnailResponse {
-  fileURL: string;
-  filePath: string;
-}
 
-const categories = [
-  "Technology",
-  "Sport",
-  "Food",
-  "Travel",
-  "Health",
-  "Finance",
-  "Lifestyle",
-  "Other",
-];
+
+
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required.").max(255),
   description: z.string().min(1, "Description is required.").max(500),
   category: z.string().min(1, "Category is required."),
-  author: z.string().min(1, "Author is required.").max(100),
-  thumbnail: z.instanceof(File),
+  thumbnail: z.instanceof(File, { message: "Thumbnail is required." }),
   content: z.string().min(1, "Content is required."),
 });
 
@@ -64,8 +51,7 @@ export default function CreateBlog() {
     defaultValues: {
       title: "",
       description: "",
-      category: "",
-      author: "",
+      category: "General",
       thumbnail: undefined,
       content: "",
     },
@@ -78,28 +64,19 @@ export default function CreateBlog() {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append("file", data.thumbnail);
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("category", data.category);
+      formData.append("content", data.content);
+      formData.append("thumbnail", data.thumbnail);
 
-      const folderName = "images";
-      const fileName = Date.now() + Math.floor(Math.random() * 1000);
-      const response = await axiosInstance.post<ThumbnailResponse>(
-        `/api/files/${folderName}/${fileName}`,
-        formData,
-      );
-
-      await axiosInstance.post("/api/data/Blogs", {
-        author: data.author,
-        category: data.category,
-        content: data.content,
-        description: data.description,
-        thumbnail: response.data.fileURL,
-        title: data.title,
-      });
+      await axiosInstance.post("/blogs", formData);
 
       alert("Blog created successfully!");
       navigate("/");
     } catch (error) {
       console.log(error);
+      alert("Failed to create blog. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -180,55 +157,25 @@ export default function CreateBlog() {
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="category">Category</FieldLabel>
                     <Select
-                      name={field.name}
-                      value={field.value}
                       onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
-                      <SelectTrigger
-                        id="category"
-                        aria-invalid={fieldState.invalid}
-                      >
+                      <SelectTrigger id="category">
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem
-                            key={category}
-                            value={category.toLowerCase()}
-                          >
-                            {category}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="General">General</SelectItem>
+                        <SelectItem value="Technology">Technology</SelectItem>
+                        <SelectItem value="LifeStyle">LifeStyle</SelectItem>
+                        <SelectItem value="Food">Food</SelectItem>
                       </SelectContent>
                     </Select>
-
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
               />
-
-              {/* Author */}
-              <Controller
-                name="author"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="author">Author</FieldLabel>
-                    <Input
-                      {...field}
-                      id="author"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Enter author name"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
               {/* Thumbnail */}
               <Controller
                 name="thumbnail"

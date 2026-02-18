@@ -13,7 +13,7 @@ import {
 } from "~/components/ui/card";
 import { Field, FieldError, FieldLabel } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { axiosInstance2 } from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters."),
@@ -35,7 +35,7 @@ export default function Register() {
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      await axiosInstance2.post("/auth/register", {
+      await axiosInstance.post("/auth/register", {
         name: data.name,
         email: data.email,
         password: data.password,

@@ -5,7 +5,7 @@
 //   baseURL: "https://doablefold-us.backendless.app",
 // });
 
-// export const axiosInstance2 = axios.create({
+// export const axiosInstance = axios.create({
 //   baseURL: "http://localhost:8000",
 //   withCredentials: true,
 // });
@@ -15,7 +15,7 @@
 //   withCredentials: true,
 // });
 
-// axiosInstance2.interceptors.response.use(
+// axiosInstance.interceptors.response.use(
 //   (response: AxiosResponse) => response,
 //   async (error: AxiosError) => {
 //     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
@@ -29,7 +29,7 @@
 
 //       try {
 //         await refreshInstance.post("/auth/refresh");
-//         return axiosInstance2(originalRequest);
+//         return axiosInstance(originalRequest);
 //       } catch (error) {
 //         useAuth.getState().logout();
 //         return Promise.reject(error);
@@ -43,11 +43,11 @@
 import axios from "axios";
 import { useAuth } from "~/stores/useAuth";
 
-export const axiosInstance = axios.create({
-  baseURL: "https://doablefold-us.backendless.app",
-});
+// export const axiosInstance = axios.create({
+//   baseURL: "https://doablefold-us.backendless.app",
+// });
 
-export const axiosInstance2 = axios.create({
+export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL_API || "http://localhost:8000",
   withCredentials: true,
 });
@@ -57,7 +57,7 @@ export const refreshInstance = axios.create({
   withCredentials: true,
 });
 
-axiosInstance2.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -69,7 +69,7 @@ axiosInstance2.interceptors.response.use(
     ) {
       try {
         await refreshInstance.post("/auth/refresh");
-        return axiosInstance2(originalRequest);
+        return axiosInstance(originalRequest);
       } catch (error) {
         useAuth.getState().logout();
         return Promise.reject(error);

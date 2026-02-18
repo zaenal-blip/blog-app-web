@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { axiosInstance2 } from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 
 export type UserAuth = {
   "id": number,
@@ -27,7 +27,7 @@ export const useAuth = create<Store>()(
       login: (payload) => set(() => ({ user: payload })),
       logout: async () => {
         try {
-          await axiosInstance2.post("/auth/logout");
+          await axiosInstance.post("/auth/logout");
         } catch (error) {
           console.error("Logout error:", error);
         } finally {

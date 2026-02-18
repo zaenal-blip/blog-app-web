@@ -1,31 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router";
+import type { Blog } from "types/blog";
 import Footer from "~/components/footer";
 import Navbar from "~/components/navbar";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { axiosInstance } from "~/lib/axios";
 import type { Route } from "./+types/blog";
-import type { Blog } from "types/blog";
+import { formatDate } from "~/utils/formatter";
 
 export default function Blog({ params }: Route.ComponentProps) {
   const { data: blog, isPending } = useQuery({
-    queryKey: ["blog", params.objectId],
+    queryKey: ["blog", params.slug],
     queryFn: async () => {
       const { data } = await axiosInstance<Blog>(
-        `/api/data/Blogs/${params.objectId}`,
+        `/Blogs/${params.slug}`,
       );
       return data;
     },
   });
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   if (isPending) {
     return (
@@ -83,12 +76,6 @@ export default function Blog({ params }: Route.ComponentProps) {
               Back to Blogs
             </Button>
           </Link>
-
-          {/* Category Badge */}
-          <Badge variant="secondary" className="mb-4">
-            {blog.category}
-          </Badge>
-
           {/* Title */}
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             {blog.title}
@@ -96,9 +83,9 @@ export default function Blog({ params }: Route.ComponentProps) {
 
           {/* Meta Info */}
           <div className="flex items-center gap-4 text-muted-foreground mb-8 pb-8 border-b">
-            <span className="font-medium">{blog.author}</span>
+            <span className="font-medium">{blog.thumbnail}</span>
             <span>•</span>
-            <span>{formatDate(blog.created)}</span>
+            <span>{formatDate(blog.createdAt)}</span>
           </div>
 
           {/* Description */}
